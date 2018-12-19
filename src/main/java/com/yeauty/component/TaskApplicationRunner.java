@@ -22,6 +22,25 @@ public class TaskApplicationRunner implements ApplicationRunner {
     @Value("${mode}")
     String mode;
 
+    @Value("${from-station}")
+    String fromStation;
+    @Value("${to-station}")
+    String toStation;
+    @Value("${just-gd}")
+    String justGd;
+    @Value("${dept-date}")
+    String deptDate;
+    @Value("${time-range}")
+    String timeRange;
+    @Value("${seat-name}")
+    String seatName;
+    @Value("${passenger-name}")
+    String passengerName;
+    @Value("${passport-no}")
+    String passportNo;
+    @Value("${sex}")
+    String sex;
+
     @Autowired
     ReaperService reaperService;
 
@@ -33,6 +52,8 @@ public class TaskApplicationRunner implements ApplicationRunner {
         }
 
         logger.info("您选择的模式为: " + mode);
+        logger.debug("from-station: {}, to-station: {}, just-gd: {}, dept-date: {}, time-range: {}, seat-name: {}, passenger-name: {}, passport-no: {}, sex: {}",
+                fromStation, toStation, justGd, deptDate, timeRange, seatName, passengerName, passportNo, sex);
 
         switch (mode) {
             case "1":
