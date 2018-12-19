@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -32,6 +34,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReaperServiceImpl implements ReaperService {
 
     private static final Logger logger = LoggerFactory.getLogger(ReaperServiceImpl.class);
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("H:mm");
 
@@ -300,6 +305,15 @@ public class ReaperServiceImpl implements ReaperService {
                 logger.info("票数:" + seatNum.asText() + " [" + seatName + " ￥" + classSeatNode.get("seatPrice").asText() + "]");
                 logger.info("状态:" + statusTextNode.asText());
                 if (statusTextNode.asText().contains("占座成功")) {
+
+                    // 给我发送一个抢票成功的邮件
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom("908686171@qq.com");
+                    message.setTo("908686171@qq.com");
+                    message.setSubject("主题：抢到火车票啦");
+                    message.setText("出发时间:" + deptDate + " " + deptTimeNode.asText() + "\r车次:" + trainCodeNode.asText() + " [" + deptStationName + " 开往 " + arrStationName + "]\r票数:" + seatNum.asText() + " [" + seatName + " ￥" + classSeatNode.get("seatPrice").asText() + "] \r状态:" + statusTextNode.asText() + "\r");
+                    mailSender.send(message);
+
                     DingRobotUtils.send(webhookToken, "出发时间:" + deptDate + " " + deptTimeNode.asText() + "\r车次:" + trainCodeNode.asText() + " [" + deptStationName + " 开往 " + arrStationName + "]\r票数:" + seatNum.asText() + " [" + seatName + " ￥" + classSeatNode.get("seatPrice").asText() + "] \r状态:" + statusTextNode.asText() + "\r", true);
                     System.exit(0);
                     return;
